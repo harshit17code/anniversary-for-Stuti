@@ -77,11 +77,11 @@
             transform: translateX(0);
         }
 
-        /* --- Flip Card --- */
-        .flip-card { perspective: 1000px; }
+        /* --- Flip Card (Click Interaction) --- */
+        .flip-card { perspective: 1000px; cursor: pointer; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; border-radius: 1rem; }
+        .flip-card.is-flipped .flip-card-inner { transform: rotateY(180deg); } /* Flip on class add */
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; border-radius: 1rem; text-align: center; }
         .flip-card-back { transform: rotateY(180deg); }
 
         /* --- Photo Modal (Lightbox) --- */
@@ -89,142 +89,180 @@
         .modal-content { margin: auto; display: block; max-width: 80vw; max-height: 80vh; border-radius: 1rem; }
         .modal-close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
         .modal-close:hover, .modal-close:focus { color: #bbb; }
+
+        /* --- Splash Screen --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fffafb;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out;
+        }
     </style>
 </head>
 <body class="bg-rose-50 text-gray-800">
 
-    <!-- Photo Modal Structure -->
-    <div id="photoModal" class="modal hidden"><span id="modalClose" class="modal-close">&times;</span><img class="modal-content" id="modalImage"></div>
-
-    <!-- Main Container -->
-    <div class="container mx-auto p-4 md:p-8">
-
-        <!-- Header / Hero Section -->
-        <header class="relative text-center min-h-screen flex flex-col justify-center items-center text-rose-800">
-            <canvas id="hearts-canvas"></canvas>
-            <div class="relative z-10">
-                <h1 class="font-script text-6xl md:text-8xl animate-fade-in gradient-text">Happy 1 Month</h1>
-                <p class="text-3xl md:text-5xl mt-4 animate-fade-in" style="animation-delay: 0.2s;">My Dearest Stuti</p>
-                <p class="mt-8 text-lg animate-fade-in" style="animation-delay: 0.4s;">I made this to remember our beautiful first month...</p>
-                <svg class="w-8 h-8 mt-12 mx-auto animate-bounce animate-fade-in" style="animation-delay: 0.6s;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-        </header>
-
-        <main>
-            <!-- A Letter To You Section -->
-            <section class="my-20 md:my-32 p-8 bg-white rounded-2xl shadow-lg text-center">
-                <h2 class="font-script text-5xl text-rose-600 mb-8">A Letter To You</h2>
-                <button id="revealLetterBtn" class="bg-rose-500 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 shadow-md glow-button">Click to Open</button>
-                <div id="letterContent" class="hidden mt-8 text-left">
-                    <blockquote class="text-lg text-gray-700 leading-relaxed italic border-l-4 border-rose-200 pl-6">
-                        "My Dearest Stuti,<br><br>
-                        It feels like just yesterday I was waiting for you at the metro station, feeling so nervous and excited, holding flowers and chocolates. From the moment I saw you, I knew this was going to be something special. This past month has been a whirlwind of beautiful moments, and I wanted to create this little space to remember it all.<br><br>
-                        I'll never forget our first date - heading to your favorite cafe, sharing coffee and spring rolls, and how easily we talked for hours. The long, peaceful walk we took by Moti Jheel afterwards felt like something out of a movie. And speaking of movies, I'll always cherish our second date, holding your hand in the dark theater, and how you sweetly fed me with your own hands.<br><br>
-                        Even though we knew long distance would be a part of our story, every moment we've shared—from the silly fun at the game zone to the quiet moments boating on the lake—has made it all worth it. Through all the challenges, supporting you and being with you has been the most rewarding part of my life. This is for you, to celebrate our incredible beginning and everything that's to come."
-                        <br><br>With all my love,<cite class="font-script text-2xl not-italic block text-right mt-4 text-rose-700">-Harshit</cite></blockquote>
-                </div>
-            </section>
-
-            <!-- Decorative Divider -->
-            <div class="flex justify-center my-12">
-                <svg width="100" height="50" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.68,29.42C14.79,23,28.23,11.33,41.22,16.45c13.79,5.4,18.8,22.2,32.5,27.17,11.45,4.15,20.2-5.4,20.2-5.4" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M93.92,38.22s-2.4-5.2-7.6-5.2-6.8,5.2-6.8,5.2" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.68,29.42s-4.8,3.6-4.8,8.8,4.8,8,4.8,8" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-
-            <!-- Animated Story Timeline Section -->
-            <section class="my-20 md:my-32">
-                <h2 class="font-script text-5xl text-center text-rose-600 mb-12">Our Story So Far</h2>
-                <div class="relative">
-                    <div class="absolute left-1/2 h-full w-0.5 bg-rose-200 -translate-x-1/2"></div>
-                    <div class="flex justify-start items-center w-full mb-8 timeline-item left"><div class="w-5/12"><div class="bg-white p-6 rounded-2xl shadow-md text-right"><h3 class="font-bold text-xl text-rose-700">Our First Date</h3><time class="text-sm text-gray-500">June 20, 2025</time><p class="mt-2 text-gray-600">I'll never forget seeing you at the metro station... The walk by Moti Jheel afterwards was perfect.</p></div></div><div class="w-2/12 flex justify-center"><div class="z-10 bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">1</div></div><div class="w-5/12"></div></div>
-                    <div class="flex justify-end items-center w-full mb-8 timeline-item right"><div class="w-5/12"></div><div class="w-2/12 flex justify-center"><div class="z-10 bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">2</div></div><div class="w-5/12"><div class="bg-white p-6 rounded-2xl shadow-md text-left"><h3 class="font-bold text-xl text-rose-700">Movie & Fun Zone</h3><time class="text-sm text-gray-500">June 28, 2025</time><p class="mt-2 text-gray-600">Holding your hand during the movie felt so right... The boating afterwards was so peaceful and wholesome.</p></div></div></div>
-                    <div class="flex justify-start items-center w-full mb-8 timeline-item left"><div class="w-5/12"><div class="bg-white p-6 rounded-2xl shadow-md text-right"><h3 class="font-bold text-xl text-rose-700">The Beginning</h3><time class="text-sm text-gray-500">July 5, 2025</time><p class="mt-2 text-gray-600">After so many amazing moments, we decided to be together, ready to face the distance. It hasn't been easy, but being with you is worth everything.</p></div></div><div class="w-2/12 flex justify-center"><div class="z-10 bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">3</div></div><div class="w-5/12"></div></div>
-                </div>
-            </section>
-
-            <!-- Decorative Divider -->
-            <div class="flex justify-center my-12">
-                <svg width="100" height="50" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.68,29.42C14.79,23,28.23,11.33,41.22,16.45c13.79,5.4,18.8,22.2,32.5,27.17,11.45,4.15,20.2-5.4,20.2-5.4" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M93.92,38.22s-2.4-5.2-7.6-5.2-6.8,5.2-6.8,5.2" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.68,29.42s-4.8,3.6-4.8,8.8,4.8,8,4.8,8" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-
-            <!-- Memory Unlock Section -->
-            <section id="quizSection" class="my-20 md:my-32 p-8 bg-white rounded-2xl shadow-lg text-center">
-                <h2 class="font-script text-5xl text-rose-600 mb-4">Unlock a Special Memory</h2>
-                <p class="text-gray-600 mb-6">Answer the question to reveal our moments together.</p>
-                <label for="quizInput" class="font-bold text-lg text-gray-700">What is the name of the first stuff toy that I gave you?</label>
-                <div class="flex justify-center items-center gap-2 mt-4">
-                    <input type="text" id="quizInput" class="w-full max-w-xs p-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500" placeholder="Your answer...">
-                    <button id="quizSubmitBtn" class="bg-rose-500 text-white font-bold py-2 px-6 rounded-lg transition-colors glow-button">Unlock</button>
-                </div>
-                <p id="quizError" class="text-red-500 mt-2 hidden">Not quite, try again! ❤️</p>
-            </section>
-
-            <!-- Photo Gallery Section (HIDDEN BY DEFAULT) -->
-            <section id="photoGalleryWrapper" class="my-20 md:my-32 hidden">
-                <h2 class="font-script text-5xl text-center text-rose-600 mb-12">Our Moments</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="grid gap-4">
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2270.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2272.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2273.jpg" alt=""></div>
-                    </div>
-                    <div class="grid gap-4">
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2276.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2279_SnapseedCopy.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2280_SnapseedCopy.jpg" alt=""></div>
-                    </div>
-                    <div class="grid gap-4">
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2284_SnapseedCopy_SnapseedCopy.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2307.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2318_SnapseedCopy.jpg" alt=""></div>
-                    </div>
-                    <div class="grid gap-4">
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2319_SnapseedCopy.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2323_SnapseedCopy.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2350_SnapseedCopy.jpg" alt=""></div>
-                        <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2373_SnapseedCopy.jpg" alt=""></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Reasons I Love You Section -->
-            <section class="my-20 md:my-32">
-                <h2 class="font-script text-5xl text-center text-rose-600 mb-12">A Few Reasons Why...</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>☕</span> Your Love for Coffee</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><p class="text-gray-600">Sharing that first coffee with you at your favorite cafe was the perfect start.</p></div></div></div>
-                    <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>😂</span> Your Playful Side</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><p class="text-gray-600">From the fun zone to our silly moments, I love how we can just laugh together.</p></div></div></div>
-                    <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Your Caring Heart</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><p class="text-gray-600">The way you fed me during the movie was so sweet. It's the little things you do.</p></div></div></div>
-                    <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>🌙</span> Our Long Talks</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><p class="text-gray-600">Whether by a lake or over the phone, I feel like I can talk to you about anything.</p></div></div></div>
-                    <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💪</span> Your Strength</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><p class="text-gray-600">Facing a long-distance relationship isn't easy, but your strength inspires me every day.</p></div></div></div>
-                    <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>✨</span> Just... Us</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><p class="text-gray-600">Everything we've built in just one month feels so special. I'm so lucky to have you.</p></div></div></div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="text-center py-12">
-            <p class="font-script text-3xl text-rose-700">Here's to our first month, and all the ones to come.</p>
-            <p class="mt-4 text-gray-600">I love you more every day.</p>
-        </footer>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="text-center p-8">
+            <h2 class="font-script text-5xl text-rose-600 mb-4">For Stuti</h2>
+            <p class="text-gray-700 mb-8">A little something to celebrate our first month.</p>
+            <button id="enter-button" class="bg-rose-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 shadow-md glow-button text-lg">
+                Click to Enter
+            </button>
+        </div>
     </div>
 
-    <!-- 
-        IMPORTANT: To add your song:
-        1. Create a folder named "music" in your project.
-        2. Place your MP3 file inside it (e.g., "our-song.mp3").
-        3. Update the `src` below to match your file path.
-    -->
+    <!-- Main Content (hidden initially) -->
+    <div id="main-content" class="hidden">
+        <!-- Photo Modal Structure -->
+        <div id="photoModal" class="modal hidden"><span id="modalClose" class="modal-close">&times;</span><img class="modal-content" id="modalImage"></div>
+
+        <!-- Main Container -->
+        <div class="container mx-auto p-4 md:p-8">
+
+            <!-- Header / Hero Section -->
+            <header class="relative text-center min-h-screen flex flex-col justify-center items-center text-rose-800">
+                <canvas id="hearts-canvas"></canvas>
+                <div class="relative z-10">
+                    <h1 class="font-script text-6xl md:text-8xl animate-fade-in gradient-text">Happy 1 Month</h1>
+                    <p class="text-3xl md:text-5xl mt-4 animate-fade-in" style="animation-delay: 0.2s;">My Dearest Stuti</p>
+                    <p class="mt-8 text-lg animate-fade-in" style="animation-delay: 0.4s;">I made this to remember our beautiful first month...</p>
+                    <svg class="w-8 h-8 mt-12 mx-auto animate-bounce animate-fade-in" style="animation-delay: 0.6s;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </header>
+
+            <main>
+                <!-- A Letter To You Section -->
+                <section class="my-20 md:my-32 p-8 bg-white rounded-2xl shadow-lg text-center">
+                    <h2 class="font-script text-5xl text-rose-600 mb-8">A Letter To You</h2>
+                    <button id="revealLetterBtn" class="bg-rose-500 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 shadow-md glow-button">Click to Open</button>
+                    <div id="letterContent" class="hidden mt-8 text-left">
+                        <blockquote class="text-lg text-gray-700 leading-relaxed italic border-l-4 border-rose-200 pl-6">
+                            "My Dearest Stuti,<br><br>
+                            It feels like just yesterday I was waiting for you at the metro station, feeling so nervous and excited, holding flowers and chocolates. From the moment I saw you, I knew this was going to be something special. This past month has been a whirlwind of beautiful moments, and I wanted to create this little space to remember it all.<br><br>
+                            I'll never forget our first date - heading to your favorite cafe, sharing coffee and spring rolls, and how easily we talked for hours. The long, peaceful walk we took by Moti Jheel afterwards felt like something out of a movie. And speaking of movies, I'll always cherish our second date, holding your hand in the dark theater, and how you sweetly fed me with your own hands.<br><br>
+                            Even though we knew long distance would be a part of our story, every moment we've shared—from the silly fun at the game zone to the quiet moments boating on the lake—has made it all worth it. Through all the challenges, supporting you and being with you has been the most rewarding part of my life. This is for you, to celebrate our incredible beginning and everything that's to come."
+                            <br><br>With all my love,<cite class="font-script text-2xl not-italic block text-right mt-4 text-rose-700">-Harshit</cite></blockquote>
+                    </div>
+                </section>
+
+                <!-- Decorative Divider -->
+                <div class="flex justify-center my-12">
+                    <svg width="100" height="50" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.68,29.42C14.79,23,28.23,11.33,41.22,16.45c13.79,5.4,18.8,22.2,32.5,27.17,11.45,4.15,20.2-5.4,20.2-5.4" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M93.92,38.22s-2.4-5.2-7.6-5.2-6.8,5.2-6.8,5.2" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.68,29.42s-4.8,3.6-4.8,8.8,4.8,8,4.8,8" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <!-- Animated Story Timeline Section -->
+                <section class="my-20 md:my-32">
+                    <h2 class="font-script text-5xl text-center text-rose-600 mb-12">Our Story So Far</h2>
+                    <div class="relative">
+                        <div class="absolute left-1/2 h-full w-0.5 bg-rose-200 -translate-x-1/2"></div>
+                        <div class="flex justify-start items-center w-full mb-8 timeline-item left"><div class="w-5/12"><div class="bg-white p-6 rounded-2xl shadow-md text-right"><h3 class="font-bold text-xl text-rose-700">Our First Date</h3><time class="text-sm text-gray-500">June 20, 2025</time><p class="mt-2 text-gray-600">I'll never forget seeing you at the metro station... The walk by Moti Jheel afterwards was perfect.</p></div></div><div class="w-2/12 flex justify-center"><div class="z-10 bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">1</div></div><div class="w-5/12"></div></div>
+                        <div class="flex justify-end items-center w-full mb-8 timeline-item right"><div class="w-5/12"></div><div class="w-2/12 flex justify-center"><div class="z-10 bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">2</div></div><div class="w-5/12"><div class="bg-white p-6 rounded-2xl shadow-md text-left"><h3 class="font-bold text-xl text-rose-700">Movie & Fun Zone</h3><time class="text-sm text-gray-500">June 28, 2025</time><p class="mt-2 text-gray-600">Holding your hand during the movie felt so right... The boating afterwards was so peaceful and wholesome.</p></div></div></div>
+                        <div class="flex justify-start items-center w-full mb-8 timeline-item left"><div class="w-5/12"><div class="bg-white p-6 rounded-2xl shadow-md text-right"><h3 class="font-bold text-xl text-rose-700">The Beginning</h3><time class="text-sm text-gray-500">July 5, 2025</time><p class="mt-2 text-gray-600">After so many amazing moments, we decided to be together, ready to face the distance. It hasn't been easy, but being with you is worth everything.</p></div></div><div class="w-2/12 flex justify-center"><div class="z-10 bg-rose-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">3</div></div><div class="w-5/12"></div></div>
+                    </div>
+                </section>
+
+                <!-- Decorative Divider -->
+                <div class="flex justify-center my-12">
+                    <svg width="100" height="50" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.68,29.42C14.79,23,28.23,11.33,41.22,16.45c13.79,5.4,18.8,22.2,32.5,27.17,11.45,4.15,20.2-5.4,20.2-5.4" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M93.92,38.22s-2.4-5.2-7.6-5.2-6.8,5.2-6.8,5.2" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.68,29.42s-4.8,3.6-4.8,8.8,4.8,8,4.8,8" stroke="#fecdd3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <!-- Memory Unlock Section -->
+                <section id="quizSection" class="my-20 md:my-32 p-8 bg-white rounded-2xl shadow-lg text-center">
+                    <h2 class="font-script text-5xl text-rose-600 mb-4">Unlock a Special Memory</h2>
+                    <p class="text-gray-600 mb-6">Answer the question to reveal our moments together.</p>
+                    <label for="quizInput" class="font-bold text-lg text-gray-700">What is the name of the first stuff toy that I gave you?</label>
+                    <div class="flex justify-center items-center gap-2 mt-4">
+                        <input type="text" id="quizInput" class="w-full max-w-xs p-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500" placeholder="Your answer...">
+                        <button id="quizSubmitBtn" class="bg-rose-500 text-white font-bold py-2 px-6 rounded-lg transition-colors glow-button">Unlock</button>
+                    </div>
+                    <p id="quizError" class="text-red-500 mt-2 hidden">Not quite, try again! ❤️</p>
+                </section>
+
+                <!-- Photo Gallery Section (HIDDEN BY DEFAULT) -->
+                <section id="photoGalleryWrapper" class="my-20 md:my-32 hidden">
+                    <h2 class="font-script text-5xl text-center text-rose-600 mb-12">Our Moments</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="grid gap-4">
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2270.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2272.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2273.jpg" alt=""></div>
+                        </div>
+                        <div class="grid gap-4">
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2276.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2279_SnapseedCopy.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2280_SnapseedCopy.jpg" alt=""></div>
+                        </div>
+                        <div class="grid gap-4">
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2284_SnapseedCopy_SnapseedCopy.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2307.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2318_SnapseedCopy.jpg" alt=""></div>
+                        </div>
+                        <div class="grid gap-4">
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2319_SnapseedCopy.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2323_SnapseedCopy.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2350_SnapseedCopy.jpg" alt=""></div>
+                            <div><img class="h-auto max-w-full rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-img" src="IMG_2373_SnapseedCopy.jpg" alt=""></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reasons I Love You Section -->
+                <section class="my-20 md:my-32">
+                    <h2 class="font-script text-5xl text-center text-rose-600 mb-12">A Few Reasons Why...</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Click Here</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2 mb-2"><span>☕</span> Your Love for Coffee</h3><p class="text-gray-600">Sharing that first coffee with you at your favorite cafe was the perfect start.</p></div></div></div>
+                        <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Click Here</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2 mb-2"><span>😂</span> Your Playful Side</h3><p class="text-gray-600">From the fun zone to our silly moments, I love how we can just laugh together.</p></div></div></div>
+                        <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Click Here</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2 mb-2"><span>💖</span> Your Caring Heart</h3><p class="text-gray-600">The way you fed me during the movie was so sweet. It's the little things you do.</p></div></div></div>
+                        <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Click Here</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2 mb-2"><span>🌙</span> Our Long Talks</h3><p class="text-gray-600">Whether by a lake or over the phone, I feel like I can talk to you about anything.</p></div></div></div>
+                        <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Click Here</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2 mb-2"><span>💪</span> Your Strength</h3><p class="text-gray-600">Facing a long-distance relationship isn't easy, but your strength inspires me every day.</p></div></div></div>
+                        <div class="flip-card h-48"><div class="flip-card-inner"><div class="flip-card-front bg-white shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2"><span>💖</span> Click Here</h3></div><div class="flip-card-back bg-rose-100 shadow-lg"><h3 class="font-bold text-xl text-rose-700 flex items-center gap-2 mb-2"><span>✨</span> Just... Us</h3><p class="text-gray-600">Everything we've built in just one month feels so special. I'm so lucky to have you.</p></div></div></div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer class="text-center py-12">
+                <p class="font-script text-3xl text-rose-700">Here's to our first month, and all the ones to come.</p>
+                <p class="mt-4 text-gray-600">I love you more every day.</p>
+            </footer>
+        </div>
+    </div>
+
     <audio id="background-music" loop>
         <source src="Perfect.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- Unmute Button -->
-    <button id="unmuteButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 100; background-color: rgba(225, 128, 170, 0.8); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-        <svg id="mutedIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd" /><path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
-        <svg id="unmutedIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-    </button>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('background-music');
+            const splashScreen = document.getElementById('splash-screen');
+            const enterButton = document.getElementById('enter-button');
+            const mainContent = document.getElementById('main-content');
+
+            enterButton.addEventListener('click', function() {
+                // Play audio unmuted
+                audio.muted = false;
+                audio.play();
+
+                // Fade out splash screen
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 1000); // Match transition duration
+
+                // Show main content
+                mainContent.classList.remove('hidden');
+                mainContent.classList.add('animate-fade-in');
+            });
+
             // --- Letter Reveal ---
             const revealBtn = document.getElementById('revealLetterBtn');
             const letterContent = document.getElementById('letterContent');
@@ -283,6 +321,14 @@
                 }
             });
 
+            // --- Flip Cards on Click ---
+            const flipCards = document.querySelectorAll('.flip-card');
+            flipCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    card.classList.toggle('is-flipped');
+                });
+            });
+
             // --- Falling Hearts ---
             const canvas = document.getElementById('hearts-canvas');
             const ctx = canvas.getContext('2d');
@@ -333,27 +379,6 @@
             resizeCanvas();
             createHearts();
             animate();
-        });
-
-        // --- Local Audio Music ---
-        const audio = document.getElementById('background-music');
-        const unmuteButton = document.getElementById('unmuteButton');
-        const mutedIcon = document.getElementById('mutedIcon');
-        const unmutedIcon = document.getElementById('unmutedIcon');
-        
-        audio.muted = true; // Start muted
-
-        unmuteButton.addEventListener('click', function() {
-            if (audio.muted) {
-                audio.muted = false;
-                audio.play(); // Play on first unmute
-                mutedIcon.classList.add('hidden');
-                unmutedIcon.classList.remove('hidden');
-            } else {
-                audio.muted = true;
-                mutedIcon.classList.remove('hidden');
-                unmutedIcon.classList.add('hidden');
-            }
         });
     </script>
 </body>
